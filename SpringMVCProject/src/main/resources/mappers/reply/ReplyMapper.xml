@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ReplyMapper">
+
+   <resultMap id="ReplyResultMap" type="ReplyVO">
+      <id property="replyNo" column="reply_no" />
+      <result property="boardNo" column="board_no" />
+      <result property="replyText" column="reply_text" />
+      <result property="replyWriter" column="reply_writer" />
+      <result property="regDate" column="reg_date" />
+      <result property="updateDate" column="update_date" />
+   </resultMap>
+   
+   <!-- 댓글 목록 불러오기 -->
+   <select id="list" resultMap="ReplyResultMap">
+		SELECT * FROM mvc_board_reply
+   		WHERE board_no = #{boardNo}
+      	ORDER BY reply_no DESC
+   </select>
+   
+   <!-- 댓글 등록하기 -->
+   <insert id="insert">
+		INSERT INTO mvc_board_reply (board_no, reply_text, reply_writer)
+	  	VALUES(#{boardNo}, #{replyText}, #{replyWriter})
+   </insert>
+   
+   <!-- 댓글 수정하기 -->
+   <update id="update">
+   		UPDATE mvc_board_reply
+   		SET reply_text = #{replyText}, update_date=NOW()
+   		WHERE reply_no=#{replyNo}
+   </update>
+   
+   <!-- 댓글 삭제하기 -->
+   <delete id="delete">
+   		DELETE FROM mvc_board_reply
+   		WHERE reply_no=#{replyNo}
+   </delete>
+   <!-- 댓글 페이징 처리된 목록 불러오기 -->
+   <select id="listPaging" resultMap="ReplyResultMap">
+   		SELECT * FROM mvc_board_reply
+   		WHERE board_no=#{boardNo}
+   		ORDER BY reply_no DESC 
+   		LIMIT #{criteria.pageStart}, #{criteria.countPerPage}
+   </select>
+   <!-- 해당 게시글의 총 댓글 수를 불러오기 -->
+   <select id="countReplies" resultType="int">
+   		SELECT count(*) FROM mvc_board_reply
+   		WHERE board_no = #{boardNo}
+   </select>
+   
+   <!-- 해당 게시글의 모든 댓글 삭제하기 -->
+   <delete id="deleteAllReply">
+   		DELETE FROM mvc_board_reply
+   		WHERE board_no = #{boardNo}
+   </delete>
+
+</mapper>

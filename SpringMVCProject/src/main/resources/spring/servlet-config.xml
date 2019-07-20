@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- DispatcherServlet 의 기반 설정을 기록하는 파일 -->
+	
+	<!-- 자바의 아노테이션 문법을 해석하게 하는 코드 -->
+	<annotation-driven />
+
+	<!-- 정적 자원 매핑 -->
+	<resources mapping="/resources/**" location="/resources/" />
+	<resources mapping="/bower_components/**" location="/resources/bower_components/"/>
+    <resources mapping="/plugins/**" location="/resources/plugins/"/>
+    <resources mapping="/dist/**" location="/resources/dist/"/>
+	
+	<!-- 뷰 리졸버 설정 -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<!--  테스트 인터셉터 빈 등록 설정 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/board/write"/>
+			<mapping path="/board/modify"/>
+			<mapping path="/board/delete"/>
+			<beans:bean id="boardInterceptor" class="com.spring.myapp.commons.interceptor.BoardInterceptor"/>
+		</interceptor>	
+	</interceptors>	
+	<!-- 자동로그인 인터셉터 등록 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="/**/"/>
+			<beans:bean id="autoLoginInterceptor" class="com.spring.myapp.commons.interceptor.AutoLoginInterceptor"/>
+		</interceptor>	
+	</interceptors>	
+	
+	<!-- 객체를 주입할 때 이하의 패키지에서 검색하겠다. -->
+	<context:component-scan base-package="com.spring.myapp" />
+	
+	<!-- 트랜잭션 관련 어노테이션 동작 설정 -->
+	<tx:annotation-driven transaction-manager="txManager"/>
+	
+	
+</beans:beans>
+
+
+
